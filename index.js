@@ -1,10 +1,15 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const express = require("express"); // <== NUEVO
 
-const httpServer = createServer();
+const app = express();              // <== NUEVO
+const httpServer = createServer(app);
+
+// Ruta básica para que Render detecte tráfico HTTP
+app.get("/", (req, res) => {
+    res.send("Servidor de WebSocket funcionando ✔️");
+});
+
 const io = new Server(httpServer, {
     cors: {
         origin: "*",
@@ -12,10 +17,10 @@ const io = new Server(httpServer, {
     }
 });
 
-io.on("connection", (socket) => {
+io.on("connection", socket => {
     console.log("Cliente conectado", socket.id);
 
-    socket.on("chat:send", (data) => {
+    socket.on("chat:send", data => {
         console.log("Mensaje recibido:", data);
         io.emit("chat:receive", data);
     });
@@ -25,6 +30,7 @@ io.on("connection", (socket) => {
     });
 });
 
-httpServer.listen(3000, () => {
-    console.log("Socket.IO corriendo en puerto 3000");
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () => {
+    console.log(`Socket.IO corriendo en puerto ${PORT}`);
 });
