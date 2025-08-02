@@ -1,13 +1,13 @@
-const { createServer } = require("http");
-const { Server } = require("socket.io");
-const express = require("express"); // <== NUEVO
+import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
-const app = express();              // <== NUEVO
+const app = express();
 const httpServer = createServer(app);
 
-// Ruta básica para que Render detecte tráfico HTTP
+// Ruta HTTP para que Render detecte vida
 app.get("/", (req, res) => {
-    res.send("Servidor de WebSocket funcionando ✔️");
+    res.send("Servidor de WebSocket activo 🟢");
 });
 
 const io = new Server(httpServer, {
